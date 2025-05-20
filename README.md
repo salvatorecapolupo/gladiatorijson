@@ -1,1 +1,1 @@
-# gladiatorijson
+# gladiatori-json
