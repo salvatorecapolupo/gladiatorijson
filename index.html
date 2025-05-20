@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>JSON Gladiators Arena</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #1e1e1e;
+      color: #fff;
+    }
+    h1 {
+      color: #fbbf24;
+    }
+    .gladiator {
+      border: 2px solid #fbbf24;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      background-color: #2e2e2e;
+    }
+    #arena {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #10b981;
+    }
+  </style>
+</head>
+<body>
+  <h1>JSON Gladiators Arena 🥊</h1>
+  <input type="file" id="fileInput" accept=".json">
+  <button onclick="startFight()">Inizia Combattimento</button>
+
+  <div id="arena"></div>
+  <div id="result"></div>
+
+  <script>
+    let userGladiators = [];
+
+    document.getElementById('fileInput').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          userGladiators = JSON.parse(e.target.result);
+          alert('Guerrieri caricati con successo!');
+        } catch (error) {
+          alert('Errore nel parsing del JSON!');
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    function startFight() {
+      if (userGladiators.length < 1) {
+        alert('Carica almeno un guerriero!');
+        return;
+      }
+
+      const opponent = {
+        nome: "Spartacus",
+        forza: 70,
+        velocita: 60,
+        intelligenza: 50
+      };
+
+      const player = userGladiators[Math.floor(Math.random() * userGladiators.length)];
+
+      renderGladiators(player, opponent);
+
+      const winner = fight(player, opponent);
+      document.getElementById('result').innerText = `🏆 Vincitore: ${winner.nome}`;
+    }
+
+    function fight(g1, g2) {
+      if (g1.nome === "Chuck Norris") return g1;
+      if (g2.nome === "Chuck Norris") return g2;
+
+      const score1 = g1.forza * 1.5 + g1.velocita + g1.intelligenza * 1.2;
+      const score2 = g2.forza * 1.5 + g2.velocita + g2.intelligenza * 1.2;
+
+      return score1 >= score2 ? g1 : g2;
+    }
+
+    function renderGladiators(g1, g2) {
+      document.getElementById('arena').innerHTML = `
+        <div class="gladiator">
+          <h2>${g1.nome}</h2>
+          <p>Forza: ${g1.forza}</p>
+          <p>Velocità: ${g1.velocita}</p>
+          <p>Intelligenza: ${g1.intelligenza}</p>
+        </div>
+        <div class="gladiator">
+          <h2>${g2.nome}</h2>
+          <p>Forza: ${g2.forza}</p>
+          <p>Velocità: ${g2.velocita}</p>
+          <p>Intelligenza: ${g2.intelligenza}</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
