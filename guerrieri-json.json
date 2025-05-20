@@ -1,0 +1,14 @@
+[
+  {
+    "nome": "Fernando Rossi",
+    "forza": 65,
+    "velocita": 92,
+    "intelligenza": 55
+  },
+  {
+    "nome": "Paola Gialli",
+    "forza": 95,
+    "velocita": 40,
+    "intelligenza": 55
+  }
+]
