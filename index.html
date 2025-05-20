@@ -5,7 +5,7 @@
   <title>JSON Gladiators Arena</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       padding: 20px;
       background-color: #1e1e1e;
       color: #fff;
@@ -19,16 +19,42 @@
       margin: 10px;
       border-radius: 10px;
       background-color: #2e2e2e;
+      width: 45%;
     }
     #arena {
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       margin-top: 20px;
     }
     #result {
       margin-top: 20px;
       font-size: 1.2em;
       color: #10b981;
+    }
+    #fightLog {
+      background: #111;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 8px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      color: #ccc;
+    }
+    .gladiator-anim {
+      animation: bounce 0.5s ease-in-out infinite alternate;
+    }
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+    .json-output {
+      margin-top: 20px;
+      background-color: #272727;
+      padding: 10px;
+      border-radius: 10px;
+      font-family: monospace;
+      white-space: pre;
+      color: #90ee90;
     }
   </style>
 </head>
@@ -39,6 +65,8 @@
 
   <div id="arena"></div>
   <div id="result"></div>
+  <div id="fightLog"></div>
+  <div id="jsonView" class="json-output"></div>
 
   <script>
     let userGladiators = [];
@@ -74,18 +102,48 @@
 
       renderGladiators(player, opponent);
 
-      const winner = fight(player, opponent);
+      const fightSteps = [];
+      const winner = fight(player, opponent, fightSteps);
+
       document.getElementById('result').innerText = `🏆 Vincitore: ${winner.nome}`;
+
+      // Effetti visuali divertenti
+      document.querySelectorAll('.gladiator').forEach(g => g.classList.add('gladiator-anim'));
+
+      // Log battaglia
+      document.getElementById('fightLog').innerText = fightSteps.join('\n');
+
+      // Mostra JSON
+      const jsonString = JSON.stringify([player, opponent], null, 2);
+      document.getElementById('jsonView').innerText = '// Dati JSON coinvolti nel combattimento:\n' + jsonString;
     }
 
-    function fight(g1, g2) {
-      if (g1.nome === "Chuck Norris") return g1;
-      if (g2.nome === "Chuck Norris") return g2;
+    function fight(g1, g2, log = []) {
+      if (g1.nome === "Chuck Norris") {
+        log.push("Chuck Norris ha guardato l'avversario. Vittoria istantanea.");
+        return g1;
+      }
+      if (g2.nome === "Chuck Norris") {
+        log.push("Chuck Norris è l'avversario. Il destino è segnato.");
+        return g2;
+      }
 
       const score1 = g1.forza * 1.5 + g1.velocita + g1.intelligenza * 1.2;
       const score2 = g2.forza * 1.5 + g2.velocita + g2.intelligenza * 1.2;
 
-      return score1 >= score2 ? g1 : g2;
+      log.push(`⚔️ ${g1.nome} carica con forza totale: ${score1.toFixed(2)}`);
+      log.push(`🛡️ ${g2.nome} risponde con forza totale: ${score2.toFixed(2)}`);
+
+      if (score1 > score2) {
+        log.push(`${g1.nome} atterra ${g2.nome} con un colpo spettacolare! 🥇`);
+        return g1;
+      } else if (score2 > score1) {
+        log.push(`${g2.nome} sfrutta un'apertura e vince il duello! 🥇`);
+        return g2;
+      } else {
+        log.push(`🤝 È un pareggio epico! Ma la giuria favorisce ${g1.nome}.`);
+        return g1;
+      }
     }
 
     function renderGladiators(g1, g2) {
